@@ -46,6 +46,11 @@ def check_project_access(project_id: int, user: User, db: Session):
 
 
 
+@router.get("/projects/{project_id}/tasks", response_model=List[TaskResponse])
+def get_project_tasks(project_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    check_project_access(project_id, current_user, db)
+    return task_crud.get_by_project(db, project_id)
+
 @router.post("/projects/{project_id}/tasks", response_model=TaskResponse, dependencies=[Depends(get_current_user)])
 def create_project_task(project_id: int, task_create: TaskCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     check_project_access(project_id, current_user, db)
